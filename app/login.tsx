@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -17,15 +17,22 @@ import {
   View,
 } from "react-native";
 
-const { loginUser }  = useAuth()
 const { width, height } = Dimensions.get("window");
 
 export default function LoginScreen() {
+  const { user, loginUser } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      console.log("🔀 Redirecting to tabs");
+      router.replace("/");
+    }
+  }, [user]);
 
   const handleEmailLogin = async () => {
     if (!email || !password) {
@@ -35,18 +42,17 @@ export default function LoginScreen() {
 
     setIsLoading(true);
     try {
-    const response = await login({ email, password });
+      const response = await login({ email, password });
 
-    const { accessToken, refreshToken, user } = response;
+      const { accessToken, refreshToken, user } = response;
 
-    // Store tokens securely
+      // Store tokens securely
 
-     await loginUser(user, accessToken, refreshToken );
-    await AsyncStorage.setItem("accessToken", accessToken);
-    await AsyncStorage.setItem("refreshToken", refreshToken);
-    await AsyncStorage.setItem("user", JSON.stringify(user));
+      await loginUser(user, accessToken, refreshToken);
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(user));
 
-      
       router.replace("/");
     } catch (error) {
       Alert.alert("Login Failed", "Invalid email or password");
@@ -178,7 +184,9 @@ export default function LoginScreen() {
 
           {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerPromptText}>Don't have an account? </Text>
+            <Text style={styles.registerPromptText}>
+              Don't have an account?{" "}
+            </Text>
             <TouchableOpacity onPress={handleRegister}>
               <Text style={styles.registerLinkText}>Sign Up</Text>
             </TouchableOpacity>

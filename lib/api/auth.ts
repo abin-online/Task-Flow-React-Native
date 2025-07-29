@@ -22,7 +22,7 @@ API.interceptors.response.use(
         if (err.response.status === 401 && !originalReq._retry) {
             originalReq._retry = true;
             const refreshToken = await AsyncStorage.getItem('refreshToken');
-            const { data } = await axios.post(`${API_BASE_URL}/api/auth/refresh`, { refreshToken });
+            const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
 
             await AsyncStorage.setItem('accessToken', data.accessToken);
             originalReq.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -101,7 +101,9 @@ export const login = async (payload: loginPayload) => {
 
 export const addTask = async(payload : any) => {
     try {
+        console.log(payload)
         const response: AxiosResponse = await API.post('/task', payload);
+        console.log(response.data)
         return response.data
     } catch (error: any) {
 
@@ -116,6 +118,7 @@ export const addTask = async(payload : any) => {
 export const getTasks = async () => {
   try {
     const response: AxiosResponse = await API.get('/task');
+    
     return response.data;
   } catch (error: any) {
     console.error("❌ Error fetching tasks:", error.response?.data || error.message);

@@ -7,21 +7,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
-    Alert,
-    Dimensions,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-const { loginUser }  = useAuth()
 
 const { width, height } = Dimensions.get("window");
 
 export default function OTPVerificationScreen() {
   const router = useRouter();
+  const { loginUser }  = useAuth()
   const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 

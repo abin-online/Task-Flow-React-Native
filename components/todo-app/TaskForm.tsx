@@ -48,7 +48,7 @@ export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
       dueDate: date.toISOString(),
       completed: initialValues?.completed ?? false,
     };
-
+console.log('new One' , newTask)
     onSubmit(newTask);
   };
 
