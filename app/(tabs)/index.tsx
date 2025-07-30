@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   ColorValue,
@@ -18,14 +18,20 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-
 const { width } = Dimensions.get("window");
 
 export default function HomeScreen() {
   const router = useRouter();
   const { user, logoutUser } = useAuth();
+
+    useEffect(() => {
+    if (!user) {
+      console.log("🔀 Redirecting to tabs");
+      router.replace("/login");
+    }
+  }, [user]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -42,6 +48,7 @@ export default function HomeScreen() {
           onPress: async () => {
             try {
               await logoutUser();
+              router.navigate('/login')
               console.log("👋 Logged out");
             } catch (err) {
               console.error("❌ Logout failed", err);
@@ -97,8 +104,9 @@ export default function HomeScreen() {
   const handleToggleStatus = async (id: string) => {
     try {
       const updatedTask = await toggleTaskStatus(id);
+      console.log(updatedTask)
       const updated = tasks.map((task: any) =>
-        task._id === id ? updatedTask : task
+        task.id === id ? updatedTask : task
       );
       setTasks(updated);
     } catch (err) {
